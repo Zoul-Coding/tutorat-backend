@@ -1,23 +1,24 @@
+import express from "express";
+import dotenv from "dotenv";
+import cors from "cors";
+import authRoutes from "./routes/AuthRoutes.js";
+import CertificateRoutes from "./routes/CertificateRoutes.js";
+import { connectDB } from "./config/connectDB.js";
 
-const express = require("express");
-require('dotenv').config({ path: './config/.env'});
-require('./config/connectDB');
+dotenv.config({ path: './config/.env' });
+
+// Connexion à la base de données
+connectDB();
 
 const app = express();
-const cors = require("cors");
-const authRoutes = require("./routes/AuthRoutes");
-const userRoutes = require("./routes/UserRoutes");
-const projectRoutes = require("./routes/ProjectRoutes");
-const taskRoutes = require("./routes/TaskRoutes")
 
+// Middleware
 app.use(express.json());
 app.use(cors());
 
-//routes
-app.use('/api', authRoutes, userRoutes, projectRoutes, taskRoutes);
+// Routes
+app.use("/api", authRoutes, CertificateRoutes);
 
-//server
 app.listen(process.env.PORT, () => {
-  console.log("The server is listening ...");
+  console.log(`Server running on port ${process.env.PORT}`);
 });
-

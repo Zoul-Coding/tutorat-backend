@@ -1,11 +1,11 @@
-const mongoose = require("mongoose");
-const createAdminIfNotExists = require('../seed/createAdmin');
+import mongoose from "mongoose";
 
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log('Connexion à MongoDB réussie ✅');
-    createAdminIfNotExists();
-  })
-  .catch(err => {
-    console.error('Erreur de connexion à MongoDB ❌', err);
-  });
+export const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log("✅ Connexion à MongoDB réussie");
+  } catch (error) {
+    console.error("❌ Erreur de connexion à MongoDB :", error.message);
+    process.exit(1);
+  }
+};
