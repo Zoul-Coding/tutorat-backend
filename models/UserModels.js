@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema(
     phone: { type: String, required: true },
     password: { type: String, required: true },
     verified: { type: Boolean, default: false },
+    photo: { type: String },
     otp: { type: String },
     otpExpires: { type: Date },
   },
