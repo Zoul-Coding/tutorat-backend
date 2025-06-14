@@ -2,8 +2,8 @@ import mongoose from "mongoose";
 
 const experienceSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-  schoolName: { type: String, required: true },
-  type: { type: String, required: false },
+  title: { type: String, required: true },
+  type: { type: String, required: true },
   startMonth: { type: String },
   startYear: { type: String },
   endMonth: { type: String },

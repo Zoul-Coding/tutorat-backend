@@ -1,5 +1,5 @@
-import Experience from "../models/Experience.js";
-import { experienceSchema } from "../validations/experienceValidation.js";
+import ExperienceModels from "../models/ExperienceModels.js"
+import { experienceSchema } from "../validators/experienceValidation.js";
 
 export const createExperience = async (req, res) => {
   try {
@@ -8,10 +8,13 @@ export const createExperience = async (req, res) => {
       return res.status(400).json({ error: error.details[0].message });
     }
 
-    const newExperience = new Experience(value);
+    const newExperience = new ExperienceModels(value);
     const saved = await newExperience.save();
 
-    res.status(201).json(saved);
+    res.status(201).json({
+      message: "Experience créée avec succès !",
+      experience: saved,
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

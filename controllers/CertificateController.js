@@ -11,7 +11,10 @@ export const createCertificate = async (req, res) => {
     const certificate = new Certificate(value);
     const savedCertificate = await certificate.save();
 
-    res.status(201).json(savedCertificate);
+     res.status(201).json({
+      message: "Certificat créée avec succès !",
+      certificat: savedCertificate,
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
