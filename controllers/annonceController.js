@@ -2,7 +2,7 @@ import AnnonceModels from "../models/AnnonceModels.js";
 import { UserModel } from "../models/UserModels.js";
 import { Certificate } from "../models/CertificateModels.js";
 import ExperienceModels from "../models/ExperienceModels.js"
-import { annonceSchema } from "../validators/annonceValidator.js";
+import { annonceSchema, updateAnnonceSchema } from "../validators/annonceValidator.js";
 
 export const createAnnonce = async (req, res) => {
   try {
@@ -148,3 +148,69 @@ export const getAnnonceBySlug = async (req, res) => {
     res.status(500).json({ message: "Erreur serveur." });
   }
 };
+
+export const getAnnonceById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const annonce = await AnnonceModels.findById(id).lean();
+
+    if (!annonce) {
+      return res.status(404).json({ message: "Annonce non trouvée" });
+    }
+
+    if (annonce.utilisateur.toString() !== req.user.id) {
+      return res.status(403).json({ message: "Accès refusé" });
+    }
+
+    res.status(200).json(annonce);
+  } catch (error) {
+    console.error("Erreur récupération annonce:", error);
+    res.status(500).json({ message: "Erreur serveur" });
+  }
+};
+
+export const updateAnnonce = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { error, value } = updateAnnonceSchema.validate(req.body);
+
+    if (error) {
+      return res.status(400).json({ message: error.details[0].message });
+    }
+
+    const annonce = await AnnonceModels.findById(id);
+
+    if (!annonce) {
+      return res.status(404).json({ message: "Annonce non trouvée" });
+    }
+
+    if (annonce.utilisateur.toString() !== req.user.id) {
+      return res.status(403).json({ message: "Accès refusé" });
+    }
+
+    Object.assign(annonce, value);
+    await annonce.save();
+
+    res.status(200).json({ message: "Annonce mise à jour avec succès", annonce });
+  } catch (error) {
+    console.error("Erreur update annonce:", error);
+    res.status(500).json({ message: "Erreur serveur" });
+  }
+};
+
+export const deleteAnnonce = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const deleted = await AnnonceModels.findByIdAndDelete(id);
+    if (!deleted) {
+      return res.status(404).json({ message: "Annonce introuvable" });
+    }
+
+    return res.status(200).json({ message: "Annonce supprimée avec succès" });
+  } catch (error) {
+    return res.status(500).json({ message: "Erreur serveur", error });
+  }
+};
+
+
